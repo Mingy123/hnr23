@@ -1,11 +1,13 @@
-# Import TF and TF Hub libraries.
 import tensorflow as tf
-import cv2, time, csv
-
+import cv2, time, csv, pickle, joblib
+import numpy as np
+from subprocess import Popen
 
 vid = cv2.VideoCapture(0)
-f = open("posture_dataset.csv", "a")
-writer = csv.writer(f)
+modelscorev2 = joblib.load('scoreregression.pkl', mmap_mode='r')
+
+past_few = []
+process = None
 
 while True:
     _, frame = vid.read()
@@ -29,25 +31,33 @@ while True:
     # Output is a [1, 1, 17, 3] numpy array.
     output = interpreter.get_tensor(output_details[0]['index'])
     keypoints = output.reshape(-1, 3)
+
     row = []
     for point in range(9):
         row.append(keypoints[point][0])
         row.append(keypoints[point][1])
-    row.append("side")
-    # writer.writerow(row)
-    EDGES = { (0, 1), (0, 2), (1, 3), (2, 4), (0, 5), (0, 6), (5, 7), (6, 8), (5, 6) }
+    # load the model from disk
 
-    for i, (start, end) in enumerate(EDGES):
-        start_point = (int(keypoints[start][1] * 192), int(keypoints[start][0] * 192))
-        end_point = (int(keypoints[end][1] * 192), int(keypoints[end][0] * 192))
-        cv2.line(frame, start_point, end_point, (255, 0, 0), 2)
+    result = modelscorev2.predict(np.array(row).reshape(1, -1))[0]
+    if len(past_few) > 3: past_few.pop()
+    past_few.insert(0, result)
 
-    # Display the input image with the skeleton overlay
-    cv2.imshow("Skeleton", frame)
-    key = cv2.waitKey(100)
-    if key == ord('q'):
-        cv2.destroyAllWindows()
-        break
+    # indeed will defo not hire me over the code below
+    flag = len(past_few) == 4
+    for item in past_few:
+        flag = past_few[0] == item and flag
+
+    if flag:
+        if past_few[0] != "proper" and process is None:
+            print("triggering", past_few[0])
+            process = Popen(['python', 'tk_thread.py', past_few[0]])
+        elif past_few[0] == "proper" and process is not None:
+            print("Killing!")
+            process.kill()
+            process = None
 
 
-f.close()
+    print(past_few, flag)
+
+
+    time.sleep(1)
