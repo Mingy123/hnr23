@@ -44,5 +44,6 @@ while True:
         buffer.append(keypoints[point][1])
     # load the model from disk
     if len(buffer) == 64:
-        result = modelscorev2.predict_proba(np.array(buffer).reshape(1, -1))
+        result = modelscorev2.predict(np.array(buffer).reshape(1, -1))
+        print(result)
         buffer = []

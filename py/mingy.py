@@ -10,15 +10,14 @@ import tensorflow as tf
 import cv2, csv, joblib
 import numpy as np
 
-modelscorev2 = joblib.load('jumpmodel.pkl' , mmap_mode ='r')
+modelscorev2 = joblib.load('workout/jumpmodel.pkl' , mmap_mode ='r')
 
 def main(frames):
-    if len(frames) != 4 return
+    if len(frames) != 4: return
     buffer = []
     for i in frames:
-        kp = i.reshape(-1, 3)
         for point in range(5, 13):
-            buffer.append(kp[point][0])
-            buffer.append(kp[point][1])
-    result = modelscorev2.predict_proba(np.array(buffer).reshape(1, -1))
-    return result[0]
+            buffer.append(i[point][0])
+            buffer.append(i[point][1])
+    result = modelscorev2.predict(np.array(buffer).reshape(1, -1))
+    return result
