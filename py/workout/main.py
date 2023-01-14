@@ -38,7 +38,7 @@ while True:
     for point in range(5,13):
         row.append(keypoints[point][0])
         row.append(keypoints[point][1])
-    row.append("scamming")
+    row.append("sitting")
     writer.writerow(row)
     EDGES = { (5, 7), (7, 9), (6, 8), (8, 10), (5, 6), (5, 11), (6, 12), (11, 12) }
 

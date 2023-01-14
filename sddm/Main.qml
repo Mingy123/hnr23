@@ -13,6 +13,7 @@ Rectangle {
     } property real eHeight: ratio*eWidth
     property real eScale: eWidth/1920
     property bool unlock: false
+    property bool almost: false
     property var date: new Date()
     Timer {
         id: ai_timer
@@ -24,7 +25,9 @@ Rectangle {
           req.open("GET", "http://localhost:5000/jumping");
           req.onreadystatechange = function() {
             if (req.readyState == XMLHttpRequest.DONE) {
-              if (req.responseText == '1') unlock = true
+              if (req.responseText == '2') unlock = true
+              else if (req.response == '1') almost = true
+              else almost = false
             }
           } req.send()
         }
@@ -50,6 +53,14 @@ Rectangle {
         }
     }
 
+    Rectangle {
+        id: webcam_frame
+        color: clock.color
+        width: webcam.width + 4
+        height: webcam.height + 4
+        anchors.centerIn: webcam
+    }
+
     WebEngineView {
         id: webcam
         url: "http://127.0.0.1:5000/video_feed"
@@ -70,9 +81,16 @@ Rectangle {
             top: virt.top
             topMargin: eHeight * 0.03
         }
-        text: unlock ? "Unlocked!" : 
-            pad(date.getHours(), 2) + ":" + pad(date.getMinutes(), 2)
-        color: unlock ? "green" : "white"
+        text: {
+            if (unlock) return "Unlocked!"
+            else if (almost) return "Almost!"
+            return pad(date.getHours(), 2) + ":" + pad(date.getMinutes(), 2)
+        }
+        color: {
+            if (unlock) return "green"
+            else if (almost) return "yellow"
+            else return "white"
+        }
         font.pointSize: 48
         scale: eScale
     }
@@ -99,11 +117,9 @@ Rectangle {
         }
 
         TextBox {
-            MouseArea {
-                anchors.fill: parent
-                onClicked: mouse.accepted = unlock
-            }
+            enabled: unlock
             id: username_box
+            font.pointSize: 24
             anchors {
                 bottom: parent.verticalCenter
                 bottomMargin: eHeight * 0.01
@@ -120,10 +136,7 @@ Rectangle {
         }
 
         PasswordBox {
-            MouseArea {
-                anchors.fill: parent
-                onClicked: mouse.accepted = unlock
-            }
+            enabled: unlock
             id: password_box
             anchors {
                 top: parent.verticalCenter
@@ -140,8 +153,8 @@ Rectangle {
         }
 
         Keys.onPressed: (kev) => {
-            if (!unlocked || !username_box.text || !password_box.text) return;
-            if (kev.key == Qt.Key_Enter) {
+            if (!unlock || !username_box.text || !password_box.text) return;
+            if (kev.key == Qt.Key_Enter || kev.key == Qt.Key_Return) {
                 sddm.login(username_box.text, password_box.text, session.index)
             }
         }
@@ -150,6 +163,11 @@ Rectangle {
     Connections {
         target: sddm
         onLoginFailed: unlock = false
+        onLoginSucceeded: {
+          var req = new XMLHttpRequest();
+          req.open("POST", "http://localhost:5000/log/in");
+          req.send()
+        }
     }
 
     // copied from https://github.com/3ximus/aerial-sddm-theme

@@ -43,7 +43,7 @@ while True:
         buffer.append(keypoints[point][0])
         buffer.append(keypoints[point][1])
     # load the model from disk
-    if len(buffer) == 64:
+    if len(buffer) == 80:
         result = modelscorev2.predict(np.array(buffer).reshape(1, -1))
         print(result)
         buffer = []

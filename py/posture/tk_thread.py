@@ -6,7 +6,7 @@ import sys
 
 BG_COLOUR = "#8D021F"
 
-window = Tk()
+window = Tk(screenName=":0.0")
 
 top_frame = Frame(master=window)
 top_frame.grid(row=0, column=0, columnspan=5, padx=100, pady=100)

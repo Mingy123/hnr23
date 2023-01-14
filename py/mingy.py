@@ -13,7 +13,7 @@ import numpy as np
 modelscorev2 = joblib.load('workout/jumpmodel.pkl' , mmap_mode ='r')
 
 def main(frames):
-    if len(frames) != 4: return
+    if len(frames) != 5: return
     buffer = []
     for i in frames:
         for point in range(5, 13):

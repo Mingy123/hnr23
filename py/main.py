@@ -15,7 +15,19 @@ start_time = datetime.now()
 frames = []
 last_frame = None
 cap = cv2.VideoCapture(0)
+walnit_activate = False
 
+
+@app.route('/log/<action>', methods=['POST'])
+def logged_in(action):
+    global walnit_activate
+    if action == 'in':
+        walnit_activate = True
+    elif action == "out":
+        walnit_activate = False
+    else:
+        return action + " is not a valid option. Use 'in' or 'out'"
+    return "Done"
 
 @app.route('/jumping')
 def jumping():
@@ -23,9 +35,13 @@ def jumping():
     for i in mingy_buf:
         if i == "proper":
             count += 1
-    if count > len(mingy_buf) / 2 and count > 10:
+    print(count, len(mingy_buf))
+    if count < 10:
+        return '0'
+    if count / len(mingy_buf) > 1 / 4:
+        return '2'
+    elif count / len(mingy_buf) > 3 / 4:
         return '1'
-    print(mingy_buf)
     return '0'
 
 
@@ -92,7 +108,7 @@ def background():
         if dist ** 0.5 < 25/192:
             continue
 
-        if len(frames) == 4: frames.pop(0)
+        if len(frames) == 5: frames.pop(0)
         frames.append(last_frame)
 
         ### mingy
@@ -101,6 +117,8 @@ def background():
         mingy_buf.append(ans)
 
         # Walnit checks time hehe
+        if not walnit_activate:
+            continue
         walnit_count += 1 # Make sure runs at 1fps
         if walnit_count == 10:
             if len(walnit_buf) > 3: walnit_buf.pop()
