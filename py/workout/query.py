@@ -1,11 +1,20 @@
+'''
+NOTE
+this code uses the pkl file and queries the ai with a frame captured by cv2
+actually, i will save 4 frames in the buffer since that's how we trained the ai
+'''
+
+
 # Import TF and TF Hub libraries.
 import tensorflow as tf
 import cv2, time, csv, pickle, joblib
 import numpy as np
 
 vid = cv2.VideoCapture(0)
-modelscorev2 = joblib.load('scoreregression.pkl' , mmap_mode ='r')
+modelscorev2 = joblib.load('jumpmodel.pkl' , mmap_mode ='r')
 print(type(modelscorev2))
+
+buffer = []
 
 while True:
     _, frame = vid.read()
@@ -30,12 +39,10 @@ while True:
     output = interpreter.get_tensor(output_details[0]['index'])
     keypoints = output.reshape(-1, 3)
 
-    row = []
-    for point in range(9):
-        row.append(keypoints[point][0])
-        row.append(keypoints[point][1])
+    for point in range(5, 13):
+        buffer.append(keypoints[point][0])
+        buffer.append(keypoints[point][1])
     # load the model from disk
-
-    result = modelscorev2.predict(np.array(row).reshape(1, -1))
-    print(result)
-
+    if len(buffer) == 64:
+        result = modelscorev2.predict_proba(np.array(buffer).reshape(1, -1))
+        buffer = []

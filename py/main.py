@@ -1,29 +1,42 @@
-from flask import Flask
+from flask import Flask, Response
 from threading import Thread
 from datetime import datetime
 import time, mingy, cv2
 
 app = Flask(__name__)
-mingy_ans = 0
+mingy_buf = []
+walnit_ans = None
 PAUSE = 0.1
 start_time = datetime.now()
 frames = []
 last_frame = None
+cap = cv2.VideoCapture(0)
 
-@app.route("/jump")
-def server():
-    return str(mingy_ans)
+@app.route('/cameraon')
+def cameraon():
+    try: cap.release()
+    except: pass
+    cap = cv2.VideoCapture(0)
+    return "Done"
 
-def run_mingy():
-    global mingy_ans
-    while True:
-        time.sleep(1)
-        mingy_ans = mingy.main()
+# this may kill the video_feed
+@app.route('/cameraoff')
+def cameraoff():
+    cap.release()
+    return "Done"
+
+@app.route('/video_feed')
+def video_feed():
+    def generate():
+        while True:
+            ret, frame = cap.read()
+            ret, jpeg = cv2.imencode('.jpg', frame)
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n\r\n')
+    return Response(generate(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 def background():
-    global start_time
-    global frames
-    global last_frame
+    global frames, last_frame
     # Copied from internet, must be correct
     # https://github.com/tensorflow/tensorflow/tree/master/tensorflow/lite/examples/python/
     interpreter = tf.lite.Interpreter(model_path="model.tflite")
@@ -46,19 +59,26 @@ def background():
         if len(frames) == 4: frames.pop(0)
         frames.append(last_frame)
 
+        # actual calculations
+        now = datetime.now()
+        if (now - start_time).seconds > TIMEOUT:
+            lock_sddm()
+        ### mingy
+        global mingy_buf
+        ans = mingy.main(frames)
+        if len(mingy_buf) == 10: mingy_buf.pop(0)
+        mingy_buf.append(ans)
+        ### walnit
+        global walnit_ans
+        walnit.warn() # TODO: this is not implemented yet
+
 def lock_sddm():
     print("---------")
     print("lock sddm")
     print("---------")
 
 if __name__ == "__main__":
-    # setting up the webcam
-    cap = cv2.VideoCapture(0)
-    a
     # mingy
-    print('a')
     thread = Thread(target=run_mingy)
-    print('running')
     thread.start()
-    print('b')
     app.run(port=5000)
