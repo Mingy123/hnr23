@@ -1,0 +1,5 @@
+Mingy: server to take a 10 fps video with cv2
+    send batches of 4 into another ai to check whether user did jumping jacks
+    also, save a variable start_time. when time exceeds 30 minutes lock the screen or smt
+    WAIT!! this means that i need to lock sddm from cmdline
+

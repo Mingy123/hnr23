@@ -1,0 +1,11 @@
+[SddmGreeterTheme]
+Name=name
+Description=NUS Hackers
+Author=Glyph
+Copyright=(c) 2022, Glyph
+License=CC-BY-SA
+Type=sddm-theme
+Website=https://github.com
+MainScript=Main.qml
+Email=email@email.com
+Theme-Id=celeste-sddm
