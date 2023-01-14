@@ -8,7 +8,7 @@ image = tf.convert_to_tensor(frame)
 image = tf.expand_dims(image, axis=0)
 
 # Initialize the TFLite interpreter
-interpreter = tf.lite.Interpreter(model_path="model.tflite")
+interpreter = tf.lite.Interpreter(model_path="../model.tflite")
 interpreter.allocate_tensors()
 
 # TF Lite format expects tensor type of float32.
