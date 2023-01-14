@@ -1,11 +1,11 @@
 # Import TF and TF Hub libraries.
 import tensorflow as tf
-import cv2, time, csv
-
+import cv2, time, csv, pickle, joblib
+import numpy as np
 
 vid = cv2.VideoCapture(0)
-f = open("posture_dataset.csv", "a")
-writer = csv.writer(f)
+modelscorev2 = joblib.load('scoreregression.pkl' , mmap_mode ='r')
+print(type(modelscorev2))
 
 while True:
     _, frame = vid.read()
@@ -29,18 +29,21 @@ while True:
     # Output is a [1, 1, 17, 3] numpy array.
     output = interpreter.get_tensor(output_details[0]['index'])
     keypoints = output.reshape(-1, 3)
+
+    EDGES = { (0, 1), (0, 2), (1, 3), (2, 4), (0, 5), (0, 6), (5, 7), (6, 8), (5, 6) }
     row = []
     for point in range(9):
         row.append(keypoints[point][0])
         row.append(keypoints[point][1])
-    row.append("proper")
-    writer.writerow(row)
-    EDGES = { (0, 1), (0, 2), (1, 3), (2, 4), (0, 5), (0, 6), (5, 7), (6, 8), (5, 6) }
+    # load the model from disk
+
+    result = modelscorev2.predict_proba(np.array(row).reshape(1, -1))
+    print(result)
 
     for i, (start, end) in enumerate(EDGES):
-        start_point = (int(keypoints[start][1] * 192), int(keypoints[start][0] * 192))
-        end_point = (int(keypoints[end][1] * 192), int(keypoints[end][0] * 192))
-        cv2.line(frame, start_point, end_point, (255, 0, 0), 2)
+            start_point = (int(keypoints[start][1] * 192), int(keypoints[start][0] * 192))
+            end_point = (int(keypoints[end][1] * 192), int(keypoints[end][0] * 192))
+            cv2.line(frame, start_point, end_point, (255, 0, 0), 2)
 
     # Display the input image with the skeleton overlay
     cv2.imshow("Skeleton", frame)
@@ -48,6 +51,3 @@ while True:
     if key == ord('q'):
         cv2.destroyAllWindows()
         break
-
-
-f.close()
