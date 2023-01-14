@@ -25,6 +25,7 @@ def jumping():
             count += 1
     if count > len(mingy_buf) / 2 and count > 10:
         return '1'
+    print(mingy_buf)
     return '0'
 
 
@@ -81,14 +82,19 @@ def background():
     global frames, last_frame, mingy_buf, walnit_ans, walnit_count, walnit_buf
     while True:
         time.sleep(PAUSE)
-        last_frame = magic()
-        if len(frames) == 4: frames.pop(0)
-        frames.append(last_frame)
-
-        # actual calculations
         now = datetime.now()
         if (now - start_time).seconds > TIMEOUT:
             lock_sddm()
+        last_frame = magic()
+        left = last_frame[5]
+        right = last_frame[6]
+        dist = (left[0]-right[0])**2 + (left[1]-right[1])**2
+        if dist ** 0.5 < 25/192:
+            continue
+
+        if len(frames) == 4: frames.pop(0)
+        frames.append(last_frame)
+
         ### mingy
         ans = mingy.main(frames)
         if len(mingy_buf) == 40: mingy_buf.pop(0)

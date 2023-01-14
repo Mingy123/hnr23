@@ -138,6 +138,18 @@ Rectangle {
             hoverColor: unlock ? "#00a499" : "transparent"
             textColor: "white"
         }
+
+        Keys.onPressed: (kev) => {
+            if (!unlocked || !username_box.text || !password_box.text) return;
+            if (kev.key == Qt.Key_Enter) {
+                sddm.login(username_box.text, password_box.text, session.index)
+            }
+        }
+    }
+
+    Connections {
+        target: sddm
+        onLoginFailed: unlock = false
     }
 
     // copied from https://github.com/3ximus/aerial-sddm-theme
