@@ -5,7 +5,7 @@ import numpy as np
 modelscorev2 = joblib.load('posture/scoreregression.pkl' , mmap_mode ='r')
 process = None
 
-def check(frames):
+def main(frames):
     past_few = []
     for keypoints in frames:
         row = []

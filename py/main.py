@@ -30,6 +30,7 @@ def jumping():
 
 @app.route('/cameraon')
 def cameraon():
+    global cap
     try:
         cap.release()
     except:
@@ -89,24 +90,21 @@ def background():
         if (now - start_time).seconds > TIMEOUT:
             lock_sddm()
         ### mingy
-        ans = mingy.check(frames)
+        ans = mingy.main(frames)
         if len(mingy_buf) == 40: mingy_buf.pop(0)
         mingy_buf.append(ans)
 
         # Walnit checks time hehe
         walnit_count += 1 # Make sure runs at 1fps
         if walnit_count == 10:
-
             if len(walnit_buf) > 3: walnit_buf.pop()
             walnit_buf.insert(0, last_frame)
-            walnit.check(walnit_buf) # Run analysis code
+            walnit.main(walnit_buf) # Run analysis code
             walnit_count = 0
 
 
 def lock_sddm():
-    print("---------")
-    print("lock sddm")
-    print("---------")
+    os.system("loginctl lock-session")
 
 
 if __name__ == "__main__":
