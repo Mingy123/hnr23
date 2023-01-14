@@ -27,7 +27,7 @@ if sys.argv[1] == "slouch":
 
     bad_frame = Frame(master=window)
     bad_frame.grid(row=1, column=1, padx=0, sticky="e")
-    bad_img = ImageTk.PhotoImage(Image.open("lean.jpg"))
+    bad_img = ImageTk.PhotoImage(Image.open("posture/lean.jpg"))
     bad = Label(image=bad_img, master=bad_frame, borderwidth=25)
     bad.pack()
 
@@ -36,12 +36,12 @@ if sys.argv[1] == "slouch":
     arrow_canvas = Canvas(arrow_frame, width=250, height=350, border=24, bg="#8D021F", highlightthickness=0)
     arrow_canvas.pack()
 
-    arrow_img = ImageTk.PhotoImage(Image.open("arrow-right-circle-fill.png"))
+    arrow_img = ImageTk.PhotoImage(Image.open("posture/arrow-right-circle-fill.png"))
     arrow_canvas.create_image(155, 200, image=arrow_img)
 
     good_frame = Frame(master=window)
     good_frame.grid(row=1, column=3)
-    good_img = ImageTk.PhotoImage(Image.open("hunch.jpg"))
+    good_img = ImageTk.PhotoImage(Image.open("posture/hunch.jpg"))
     good = Label(image=good_img, master=good_frame, borderwidth=25)
     good.pack()
 
@@ -70,7 +70,7 @@ elif sys.argv[1] == "side":
 
     bad_frame = Frame(master=window)
     bad_frame.grid(row=1, column=1, padx=0, sticky="e")
-    bad_img = ImageTk.PhotoImage(Image.open("turn.jpg"))
+    bad_img = ImageTk.PhotoImage(Image.open("posture/turn.jpg"))
     bad = Label(image=bad_img, master=bad_frame, borderwidth=25)
     bad.pack()
 
@@ -79,13 +79,12 @@ elif sys.argv[1] == "side":
     arrow_canvas = Canvas(arrow_frame, width=250, height=350, border=24, bg="#8D021F", highlightthickness=0)
     arrow_canvas.pack()
 
-    arrow_img = ImageTk.PhotoImage(Image.open("arrow-right-circle-fill.png"))
-    arrow_img = ImageTk.PhotoImage(Image.open("arrow-right-circle-fill.png"))
+    arrow_img = ImageTk.PhotoImage(Image.open("posture/arrow-right-circle-fill.png"))
     arrow_canvas.create_image(155, 200, image=arrow_img)
 
     good_frame = Frame(master=window)
     good_frame.grid(row=1, column=3)
-    good_img = ImageTk.PhotoImage(Image.open("hunch.jpg"))
+    good_img = ImageTk.PhotoImage(Image.open("posture/hunch.jpg"))
     good = Label(image=good_img, master=good_frame, borderwidth=25)
     good.pack()
 

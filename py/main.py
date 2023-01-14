@@ -2,7 +2,7 @@ from flask import Flask, Response
 from threading import Thread
 from datetime import datetime
 import tensorflow as tf
-import time, mingy, cv2
+import time, mingy, walnit, cv2
 
 app = Flask(__name__)
 mingy_buf = []
@@ -16,28 +16,34 @@ frames = []
 last_frame = None
 cap = cv2.VideoCapture(0)
 
+
 @app.route('/jumping')
 def jumping():
     count = 0
     for i in mingy_buf:
         if i == "proper":
             count += 1
-    if count > len(mingy_buf)/2 and count > 10:
+    if count > len(mingy_buf) / 2 and count > 10:
         return '1'
     return '0'
 
+
 @app.route('/cameraon')
 def cameraon():
-    try: cap.release()
-    except: pass
+    try:
+        cap.release()
+    except:
+        pass
     cap = cv2.VideoCapture(0)
     return "Done"
+
 
 # this may kill the video_feed
 @app.route('/cameraoff')
 def cameraoff():
     cap.release()
     return "Done"
+
 
 @app.route('/video_feed')
 def video_feed():
@@ -47,7 +53,9 @@ def video_feed():
             ret, jpeg = cv2.imencode('.jpg', frame)
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n\r\n')
+
     return Response(generate(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
 
 # Copied from internet, must be correct
 # https://github.com/tensorflow/tensorflow/tree/master/tensorflow/lite/examples/python/
@@ -67,8 +75,9 @@ def magic():
     keypoints = output.reshape(-1, 3)
     return keypoints
 
+
 def background():
-    global frames, last_frame, mingy_buf, walnit_ans
+    global frames, last_frame, mingy_buf, walnit_ans, walnit_count, walnit_buf
     while True:
         time.sleep(PAUSE)
         last_frame = magic()
@@ -83,23 +92,27 @@ def background():
         ans = mingy.check(frames)
         if len(mingy_buf) == 40: mingy_buf.pop(0)
         mingy_buf.append(ans)
-        ### walnit
-        ans = walnit.check(frames)
-        walnit_count += 1
+
+        # Walnit checks time hehe
+        walnit_count += 1 # Make sure runs at 1fps
         if walnit_count == 10:
-            # do stuff
-            pass
+
+            if len(walnit_buf) > 3: walnit_buf.pop()
+            walnit_buf.insert(0, last_frame)
+            walnit.check(walnit_buf) # Run analysis code
+            walnit_count = 0
+
 
 def lock_sddm():
     print("---------")
     print("lock sddm")
     print("---------")
 
+
 if __name__ == "__main__":
     thread = Thread(target=background)
     thread.start()
     app.run(port=5000)
-
 
 '''
 ret, frame = cap.read()
