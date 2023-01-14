@@ -18,7 +18,7 @@ cap = cv2.VideoCapture(0)
 def jumping():
     count = 0
     for i in mingy_buf:
-        if i == "standing":
+        if i == "proper":
             count += 1
     if count > len(mingy_buf)/2 and count > 10:
         return '1'
@@ -79,7 +79,7 @@ def background():
             lock_sddm()
         ### mingy
         ans = mingy.main(frames)
-        if len(mingy_buf) == 50: mingy_buf.pop(0)
+        if len(mingy_buf) == 40: mingy_buf.pop(0)
         mingy_buf.append(ans)
         ### walnit
         #walnit.warn() # TODO: this is not implemented yet

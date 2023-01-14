@@ -1,10 +1,9 @@
 import QtQuick 2.9
+import QtWebEngine 1.0
 
-Item {
-    function check_good() {
-    }
-
+Rectangle {
     id: root
+    color: "#333f48"
     width: 1920; height: 1080
     property real ratio: 1080/1920
     property real eWidth: {
@@ -12,7 +11,7 @@ Item {
         return height/ratio
     } property real eHeight: ratio*eWidth
     property real eScale: eWidth/1920
-    property int ai_res: 0
+    property string ai_res
     Timer {
         id: ai_timer
         repeat: true
@@ -20,7 +19,7 @@ Item {
         running: true
         onTriggered: {
         var req = new XMLHttpRequest();
-        req.open("GET", "http://localhost:5000");
+        req.open("GET", "http://localhost:5000/jumping");
         req.onreadystatechange = function() {
           if (req.readyState == XMLHttpRequest.DONE) {
             ai_res = req.responseText
@@ -30,19 +29,31 @@ Item {
         }
     }
 
-    Image {
-        id: background
-        source: "assets/background.jpg"
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
+    Rectangle {
+        id: virt
+        color: "red"
         height: eHeight
         width: eWidth
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
     }
 
-    Text {
-        text: "NUS Hackers" + ai_res
-        font.pointSize: 36
-        anchors.centerIn: parent
+    Image {
+        id: iwantyou
+        source: "assets/iwantyou.png"
+        height: eHeight * 0.9
+        width: height * sourceSize.width / sourceSize.height
+        anchors {
+            verticalCenter: virt.verticalCenter
+            left: virt.left
+            leftMargin: eWidth * 0.05
+        }
+    }
+
+    WebEngineView {
+        url: "http://127.0.0.1:5000/video_feed"
+        width: 640
+        height: 480
     }
 
     /*
