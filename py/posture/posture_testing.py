@@ -30,7 +30,6 @@ while True:
     output = interpreter.get_tensor(output_details[0]['index'])
     keypoints = output.reshape(-1, 3)
 
-    EDGES = { (0, 1), (0, 2), (1, 3), (2, 4), (0, 5), (0, 6), (5, 7), (6, 8), (5, 6) }
     row = []
     for point in range(9):
         row.append(keypoints[point][0])
@@ -40,14 +39,3 @@ while True:
     result = modelscorev2.predict_proba(np.array(row).reshape(1, -1))
     print(result)
 
-    for i, (start, end) in enumerate(EDGES):
-            start_point = (int(keypoints[start][1] * 192), int(keypoints[start][0] * 192))
-            end_point = (int(keypoints[end][1] * 192), int(keypoints[end][0] * 192))
-            cv2.line(frame, start_point, end_point, (255, 0, 0), 2)
-
-    # Display the input image with the skeleton overlay
-    cv2.imshow("Skeleton", frame)
-    key = cv2.waitKey(100)
-    if key == ord('q'):
-        cv2.destroyAllWindows()
-        break
