@@ -5,7 +5,7 @@ import numpy as np
 
 modelscorev2 = joblib.load('posture/scoreregression.pkl' , mmap_mode ='r')
 
-def main(frame):
+def check(frame):
     row = []
     for point in range(9):
         row.append(keypoints[point][0])

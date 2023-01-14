@@ -18,20 +18,18 @@ Rectangle {
         interval: 1000
         running: true
         onTriggered: {
-        var req = new XMLHttpRequest();
-        req.open("GET", "http://localhost:5000/jumping");
-        req.onreadystatechange = function() {
-          if (req.readyState == XMLHttpRequest.DONE) {
-            ai_res = req.responseText
-          }
-        }
-        req.send()
+          var req = new XMLHttpRequest();
+          req.open("GET", "http://localhost:5000/jumping");
+          req.onreadystatechange = function() {
+            if (req.readyState == XMLHttpRequest.DONE) {
+              ai_res = req.responseText
+            }
+          } req.send()
         }
     }
 
-    Rectangle {
+    Item {
         id: virt
-        color: "red"
         height: eHeight
         width: eWidth
         anchors.horizontalCenter: parent.horizontalCenter
@@ -52,8 +50,14 @@ Rectangle {
 
     WebEngineView {
         url: "http://127.0.0.1:5000/video_feed"
-        width: 640
-        height: 480
+        width: 640 * eScale
+        height: 480 * eScale
+        anchors {
+            top: virt.top
+            right: virt.right
+            topMargin: eHeight * 0.15
+            rightMargin: eWidth * 0.12
+        }
     }
 
     /*

@@ -7,6 +7,8 @@ import time, mingy, cv2
 app = Flask(__name__)
 mingy_buf = []
 walnit_ans = "placeholder"
+walnit_count = 0
+walnit_buf = []
 PAUSE = 0.1
 TIMEOUT = 3600
 start_time = datetime.now()
@@ -78,11 +80,15 @@ def background():
         if (now - start_time).seconds > TIMEOUT:
             lock_sddm()
         ### mingy
-        ans = mingy.main(frames)
+        ans = mingy.check(frames)
         if len(mingy_buf) == 40: mingy_buf.pop(0)
         mingy_buf.append(ans)
         ### walnit
-        #walnit.warn() # TODO: this is not implemented yet
+        ans = walnit.check(frames)
+        walnit_count += 1
+        if walnit_count == 10:
+            # do stuff
+            pass
 
 def lock_sddm():
     print("---------")
