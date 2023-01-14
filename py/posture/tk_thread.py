@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter.ttk import *
+import tkinter as tk
 from PIL import ImageTk, Image
 import sys
 
@@ -9,6 +10,9 @@ window = Tk()
 
 top_frame = Frame(master=window)
 top_frame.grid(row=0, column=0, columnspan=5, padx=100, pady=100)
+
+def disableLook():
+    with open("STOPCHECKLOOK", "w") as f: f.close()
 
 if sys.argv[1] == "slouch":
 
@@ -58,8 +62,11 @@ elif sys.argv[1] == "side":
     left_frame = Frame(master=window)
     left_frame.grid(row=1, column=0, padx=100)
 
-    warning = Label(text="You're looking away\nfrom your screen.\n\nThis strains your neck!", master=left_frame, font=("Roboto", 20), justify="center", background=BG_COLOUR, foreground="white")
+    warning = Label(text="You're looking away\nfrom your screen.\n\nThis strains your neck!\n", master=left_frame, font=("Roboto", 20), justify="center", background=BG_COLOUR, foreground="white")
     warning.pack()
+
+    ignore = tk.Button(text="Ignore this check", master=left_frame, command=disableLook, highlightthickness=0, bd=0)
+    ignore.pack()
 
     bad_frame = Frame(master=window)
     bad_frame.grid(row=1, column=1, padx=0, sticky="e")

@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter.ttk import *
+import tkinter as tk
 from PIL import ImageTk, Image
 
 BG_COLOUR = "#8D021F"
@@ -15,8 +16,15 @@ title.pack()
 left_frame = Frame(master=window)
 left_frame.grid(row=1, column=0, padx=100)
 
-warning = Label(text="You're leaning\ntoo far forward.\n\nLean back a bit!", master=left_frame, font=("Roboto", 20), justify="center", background=BG_COLOUR, foreground="white")
+warning = Label(text="You're leaning\ntoo far forward.\n\nLean back a bit!\n", master=left_frame, font=("Roboto", 20), justify="center", background=BG_COLOUR, foreground="white")
 warning.pack()
+
+def disableLook():
+    with open("STOPCHECKLOOK", "w") as f: f.close()
+
+ignore = tk.Button(text="Ignore this check", master=left_frame, command=disableLook, highlightthickness=0, bd=0)
+ignore.pack()
+
 
 bad_frame = Frame(master=window)
 bad_frame.grid(row=1, column=1, padx=0, sticky="e")

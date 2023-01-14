@@ -1,5 +1,5 @@
 import tensorflow as tf
-import cv2, time, csv, pickle, joblib
+import cv2, time, joblib, os
 import numpy as np
 from subprocess import Popen
 
@@ -49,8 +49,11 @@ while True:
 
     if flag:
         if past_few[0] != "proper" and process is None:
-            print("triggering", past_few[0])
-            process = Popen(['python', 'tk_thread.py', past_few[0]])
+            if past_few[0] == "side" and os.path.exists("STOPCHECKLOOK"):
+                pass
+            else:
+                print("triggering", past_few[0])
+                process = Popen(['python', 'tk_thread.py', past_few[0]])
         elif past_few[0] == "proper" and process is not None:
             print("Killing!")
             process.kill()
