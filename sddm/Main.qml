@@ -56,8 +56,8 @@ Rectangle {
     Rectangle {
         id: webcam_frame
         color: clock.color
-        width: webcam.width + 4
-        height: webcam.height + 4
+        width: webcam.width + (10 * eScale)
+        height: webcam.height + (10 * eScale)
         anchors.centerIn: webcam
     }
 
@@ -87,8 +87,8 @@ Rectangle {
             return pad(date.getHours(), 2) + ":" + pad(date.getMinutes(), 2)
         }
         color: {
-            if (unlock) return "green"
-            else if (almost) return "yellow"
+            if (unlock) return "#00ff00"
+            else if (almost) return "#FFD700"
             else return "white"
         }
         font.pointSize: 48
