@@ -12,6 +12,7 @@ walnit_buf = []
 PAUSE = 0.1
 TIMEOUT = 3600
 start_time = datetime.now()
+four_hour_count = 0
 frames = []
 last_frame = None
 cap = cv2.VideoCapture(0)
@@ -128,6 +129,9 @@ def background():
 
 
 def lock_sddm():
+    four_hour_count += 1
+    if four_hour_count == 8:
+        os.system("shutdown now")
     os.system("loginctl lock-session")
 
 
