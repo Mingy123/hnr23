@@ -7,7 +7,7 @@ a while later i decided to use 5
 
 infile = open('jump_dataset.csv', 'r')
 outfile = open('slide_dataset.csv', 'w')
-proper = standing = sitting = ''
+proper = standing = sitting = scamming = ''
 line = infile.readline()
 while line:
     stuff = line.split(',')
@@ -18,6 +18,8 @@ while line:
         standing += ','.join(stuff[:-1]) + '\n'
     elif name == 'sitting':
         sitting += ','.join(stuff[:-1]) + '\n'
+    elif name == 'scamming':
+        scamming += ','.join(stuff[:-1]) + '\n'
     else:
         print(f"{name} is unknown")
         break
@@ -32,9 +34,9 @@ def slide(thing, name):
 
 for i in slide(proper, 'proper'):
     outfile.write(i + '\n')
-
 for i in slide(standing, 'standing'):
     outfile.write(i + '\n')
-
 for i in slide(sitting, 'sitting'):
+    outfile.write(i + '\n')
+for i in slide(scamming, 'scamming'):
     outfile.write(i + '\n')

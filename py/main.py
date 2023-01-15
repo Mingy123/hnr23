@@ -32,6 +32,7 @@ def logged_in(action):
 
 @app.route('/jumping')
 def jumping():
+    global mingy_buf
     count = 0
     for i in mingy_buf:
         if i == "proper":
@@ -39,9 +40,10 @@ def jumping():
     print(count, len(mingy_buf))
     if count < 10:
         return '0'
-    if count / len(mingy_buf) > 1 / 4:
+    if count / len(mingy_buf) > 3 / 4:
+        mingy_buf = []
         return '2'
-    elif count / len(mingy_buf) > 3 / 4:
+    elif count / len(mingy_buf) > 1 / 4:
         return '1'
     return '0'
 
