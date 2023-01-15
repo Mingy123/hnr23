@@ -17,6 +17,7 @@ frames = []
 last_frame = None
 cap = cv2.VideoCapture(0)
 walnit_activate = False
+nobody_count = 0
 
 
 @app.route('/log/<action>', methods=['POST'])
@@ -38,12 +39,10 @@ def jumping():
         if i == "proper":
             count += 1
     print(count, len(mingy_buf))
-    if count < 10:
-        return '0'
-    if count / len(mingy_buf) > 3 / 4:
+    if count > 30:
         mingy_buf = []
         return '2'
-    elif count / len(mingy_buf) > 1 / 4:
+    elif count > 15:
         return '1'
     return '0'
 
@@ -98,7 +97,7 @@ def magic():
 
 
 def background():
-    global frames, last_frame, mingy_buf, walnit_ans, walnit_count, walnit_buf
+    global frames, last_frame, mingy_buf, walnit_ans, walnit_count, walnit_buf, nobody_count
     while True:
         time.sleep(PAUSE)
         now = datetime.now()
@@ -109,7 +108,13 @@ def background():
         right = last_frame[6]
         dist = (left[0]-right[0])**2 + (left[1]-right[1])**2
         if dist ** 0.5 < 25/192:
-            continue
+            nobody_count += 1
+            if nobody_count > 20:
+                print("nobody")
+                nobody_count = 0
+                mingy_buf = []
+                continue
+        else: nobody_count = 0
 
         if len(frames) == 5: frames.pop(0)
         frames.append(last_frame)
