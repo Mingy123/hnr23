@@ -18,6 +18,7 @@ last_frame = None
 cap = cv2.VideoCapture(0)
 walnit_activate = False
 nobody_count = 0
+JUMP_ACCEPT = 30
 
 
 @app.route('/log/<action>', methods=['POST'])
@@ -39,10 +40,10 @@ def jumping():
         if i == "proper":
             count += 1
     print(count, len(mingy_buf))
-    if count > 30:
+    if count > JUMP_ACCEPT:
         mingy_buf = []
         return '2'
-    elif count > 15:
+    elif count > JUMP_ACCEPT / 2:
         return '1'
     return '0'
 
